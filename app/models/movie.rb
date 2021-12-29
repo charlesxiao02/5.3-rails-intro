@@ -4,11 +4,11 @@ class Movie < ActiveRecord::Base
     return ['G', 'PG', 'PG-13', 'R']
   end
   
-  def self.with_ratings (ratings_list)
-    if ratings_list == []
-      return Movie.all
+  def self.with_ratings (ratings_list, sort_by)
+    if ratings_list.nil?
+      Movie.all.order sort_by
     else
-      return Movie.where(rating: ratings_list)
+      Movie.where(rating: ratings_list).order sort_by
     end
   end
   
