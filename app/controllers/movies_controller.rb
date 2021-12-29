@@ -8,10 +8,15 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
-    #byebug
-    @ratings_to_show_hash = Hash[ratings_list.collect { |item| [item, "1"] }]
-    @sort_by = sort_by
     @movies = Movie.with_ratings(ratings_list, @sort_by)
+    #byebug
+    if !params.key?(:ratings) || !params.key?(:sort_by)
+      flash.keep
+      url = movies_path(ratings: ratings_to_show_hash, sort_by: sort_by)
+      redirect_to url
+    end
+    @ratings_to_show_hash = ratings_to_show_hash
+    @sort_by = sort_by
     session['ratings'] = ratings_list
     session['sort_by'] = @sort_by
   end
@@ -57,6 +62,10 @@ class MoviesController < ApplicationController
 
   def sort_by
     params[:sort_by] || session['sort_by'] || 'id'
+  end
+
+  def ratings_to_show_hash
+    Hash[ratings_list.collect { |item| [item, "1"] }]
   end
 
 end
